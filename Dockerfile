@@ -1,6 +1,6 @@
 ARG ROS_DISTRO=humble
 
-FROM ros:${ROS_DISTRO}
+FROM docker.io/osrf/ros:${ROS_DISTRO}-desktop
 
 WORKDIR /ws
 
