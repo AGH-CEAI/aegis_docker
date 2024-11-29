@@ -6,6 +6,7 @@ WORKDIR /ws
 
 RUN apt-get update && \
     apt-get install -y \
+        zsh \
         ros-dev-tools && \
     # Setup workspace
     git clone -b init_version https://github.com/AGH-CEAI/aegis_ros.git src/aegis_ros && \
