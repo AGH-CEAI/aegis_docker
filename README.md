@@ -9,16 +9,16 @@ The requirements for the packages are directly taken from the [aegis_ros](https:
 ### Docker
 You can build the image using the following command:
 ```bash
-docker build . -t ceai/aegis_dev:latest 
+docker build . -t ceai/aegis_dev:latest
 ```
 Currently there is no docker compose for running it - please stick to the toolbox approach.
 
 ### Toolbox
-Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitigate the headaches about the users' privilages.
+Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitigate the headaches about the users' privileges.
 
 **Building**:
 ```bash
-podman build . -t ceai/aegis_dev:latest 
+podman build . -t ceai/aegis_dev:latest
 toolbox create --image localhost/aegis_dev:latest
 ```
 
@@ -26,7 +26,3 @@ toolbox create --image localhost/aegis_dev:latest
 ```bash
 toolbox enter aegis_dev
 ```
-
-
-
-
