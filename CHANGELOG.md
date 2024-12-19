@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - [PR-1](https://github.com/AGH-CEAI/aegis_docker/pull/1) - Initial version of the Aegis development container.
+
 ### Changed
 
 ### Deprecated
@@ -16,5 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+- [PR-2](https://github.com/AGH-CEAI/aegis_docker/pull/1) - Fixed typo with the default branch name
 
 ### Security
