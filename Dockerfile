@@ -9,7 +9,7 @@ RUN apt-get update && \
         zsh \
         ros-dev-tools && \
     # Setup workspace
-    git clone -b devel https://github.com/AGH-CEAI/aegis_ros.git src/aegis_ros && \
+    git clone -b humble-devel https://github.com/AGH-CEAI/aegis_ros.git src/aegis_ros && \
     vcs import src < src/aegis_ros/aegis/aegis.repos && \
     # Install dependencies
     rosdep update --rosdistro $ROS_DISTRO && \
