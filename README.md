@@ -20,7 +20,7 @@ Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitiga
 ```bash
 podman build . -t ceai/aegis_dev:latest
 toolbox create --image localhost/ceai/aegis_dev:latest
-# Check avaiable images
+# Check available images
 toolbox list
 ```
 
