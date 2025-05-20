@@ -28,3 +28,28 @@ toolbox list
 ```bash
 toolbox enter aegis_dev-latest
 ```
+
+
+**Known issues**:
+
+##### sudo: unable to resolve host toolbox
+
+- (Host) Add toolbox to hosts:
+
+        `sudo nano /etc/hosts`
+
+- Add line:
+
+        `127.0.1.1       toolbox`
+
+##### @user is not in the sudoers file
+
+- (Host) Install crun (1.8-1): https://launchpad.net/ubuntu/lunar/amd64/crun/1.8-1 (crun_1.8-1_amd64.deb):
+
+        `sudo apt install crun_1.8-1_amd64.deb`
+
+- (Toolbox) create group:
+
+        `newgrp sudo`
+
+- [Source](https://github.com/containers/toolbox/issues/1361)
