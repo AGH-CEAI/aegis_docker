@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - [PR-1](https://github.com/AGH-CEAI/aegis_docker/pull/1) - Initial version of the Aegis development container.
+- [PR-4](https://github.com/AGH-CEAI/aegis_docker/pull/4) - Added instructions how to handle sudo issues in toolbox.
 
 ### Changed
 
