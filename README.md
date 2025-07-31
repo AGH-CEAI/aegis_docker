@@ -17,8 +17,16 @@ Currently there is no docker compose for running it - please stick to the toolbo
 Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitigate the headaches about the users' privileges.
 
 **Building**:
+Build and tag all 3 stages or build whole stack at once:
 ```bash
 podman build . -t ceai/aegis_dev:latest
+# OR
+./build.sh
+
+```
+then proceed to toolbox creation:
+
+```bash
 toolbox create --image localhost/ceai/aegis_dev:latest
 # Check available images
 toolbox list
