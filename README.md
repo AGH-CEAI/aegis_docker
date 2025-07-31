@@ -36,3 +36,14 @@ toolbox list
 ```bash
 toolbox enter aegis_dev-latest
 ```
+
+#### Forwarding the X-session
+Podman does almost everthing, there could be a problem with the magic cookie:
+```bash
+# 1. Check the MIT cookie for unix:10
+xauth list
+# 2. Duplicate the cookie for the toolbox
+xauth add toolbx/unix:10 MIT-MAGIC-COOKIE-1 <PASTE_HERE>
+# 3. You can now access the toolbx's X-session on a remote machine
+ssh -X remote-host
+```
