@@ -38,8 +38,18 @@ toolbox enter aegis_dev-latest
 ```
 
 #### Forwarding the X-session
-Podman does almost everthing, there could be a problem with the magic cookie:
+Podman does almost everything, there could be a problem with the magic cookie:
 ```bash
+# 0. Setup proper display session inside the container
+# in host
+echo $DISPLAY
+# in toolbx
+export DISPLAY=<PASTE HERE>
+```
+If it doesn't work
+```bash
+# 0. Check /etc/hosts if there is a link for toolbx
+sudo echo "127.0.0.1    toolbx" >> /etc/hosts
 # 1. Check the MIT cookie for unix:10
 xauth list
 # 2. Duplicate the cookie for the toolbox
