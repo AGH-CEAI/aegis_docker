@@ -37,13 +37,16 @@ RUN apt update \
 
 RUN pip3 install \
         torch==2.7.1+cu128 \
-	torchvision==2.7.1+cu128 \
-	torchaudio==0.22.1+cu128 \
-	--index-url https://download.pytorch.org/whl/cu128
+	    torchvision==0.22.1+cu128\
+	    torchaudio==2.7.1+cu128 \
+	    --index-url https://download.pytorch.org/whl/cu128
 
 # --------------------------------------------------------------------------- #
 FROM learning AS genesis-sim
 ARG GENESIS_VER
 WORKDIR /ws
 
-RUN pip3 install genesis-world==${GENESIS_VER}
+RUN pip3 install \
+        genesis-world==${GENESIS_VER} \
+        # Downgrade libigl from a breaking change
+        "libigl==2.5.1"
