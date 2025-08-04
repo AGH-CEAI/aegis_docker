@@ -16,6 +16,8 @@ Currently there is no docker compose for running it - please stick to the toolbo
 ### Toolbox
 Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitigate the headaches about the users' privileges.
 
+To enable GPU support in toolbx containers on Ubuntu 22/24 host [some manual updates](./docs/ubuntu_gpu_toolbx.md) are necessary.
+
 **Building**:
 Build and tag all 3 stages or build whole stack at once:
 ```bash
