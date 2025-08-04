@@ -19,8 +19,16 @@ Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitiga
 To enable GPU support in toolbx containers on Ubuntu 22/24 host [some manual updates](./docs/ubuntu_gpu_toolbx.md) are necessary.
 
 **Building**:
+Build and tag all 3 stages or build whole stack at once:
 ```bash
 podman build . -t ceai/aegis_dev:latest
+# OR
+./build.sh
+
+```
+then proceed to toolbox creation:
+
+```bash
 toolbox create --image localhost/ceai/aegis_dev:latest
 # Check available images
 toolbox list
@@ -29,4 +37,25 @@ toolbox list
 **Entering into a new terminal**:
 ```bash
 toolbox enter aegis_dev-latest
+```
+
+#### Forwarding the X-session
+Podman does almost everything, there could be a problem with the magic cookie:
+```bash
+# 0. Setup proper display session inside the container
+# in host
+echo $DISPLAY
+# in toolbx
+export DISPLAY=<PASTE HERE>
+```
+If it doesn't work
+```bash
+# 0. Check /etc/hosts if there is a link for toolbx
+sudo echo "127.0.0.1    toolbx" >> /etc/hosts
+# 1. Check the MIT cookie for unix:10
+xauth list
+# 2. Duplicate the cookie for the toolbox
+xauth add toolbx/unix:10 MIT-MAGIC-COOKIE-1 <PASTE_HERE>
+# 3. You can now access the toolbx's X-session on a remote machine
+ssh -X remote-host
 ```
