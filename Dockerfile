@@ -6,6 +6,7 @@ WORKDIR /ws
 
 RUN apt update  \
     && apt install -y \
+        clang \
         zsh \
         ros-dev-tools \
         ros-${ROS_DISTRO}-depthai-ros \
