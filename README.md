@@ -42,7 +42,7 @@ echo "deb [trusted=yes] http://192.168.0.100/debian ./" | tee -a /etc/apt/source
 
 #### Known issues:
 
-##### `sudo`: unable to resolve host toolbox
+##### `sudo`: unable to resolve host `toolbox` / `toolbx`
 
 - (Host) Add toolbox to the `/etc/hosts`:
 
