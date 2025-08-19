@@ -1,0 +1,9 @@
+services:
+  aegis-packages:
+    build:
+      context: .
+      dockerfile: "${DOCKERFILE:-Dockerfile}"
+    ports:
+      - 80:80
+    volumes:
+      - ./packages:/var/www/html/debian
