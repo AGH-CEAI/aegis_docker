@@ -39,3 +39,29 @@ How to Set up private repo [here](utils/aegis_packages/README.md).
 ```bash
 echo "deb [trusted=yes] http://192.168.0.100/debian ./" | tee -a /etc/apt/sources.list > /dev/null
 ```
+
+#### Known issues:
+
+##### `sudo`: unable to resolve host `toolbox` / `toolbx`
+
+- (Host) Add toolbox to the `/etc/hosts`:
+
+```
+# sudo nano /etc/hosts
+127.0.0.1        toolbox
+127.0.0.1        toolbx
+```
+
+##### user is not in the sudoers file
+
+- (Host) Install [crun (1.8-1)](https://launchpad.net/ubuntu/lunar/amd64/crun/1.8-1) :
+```bash
+wget http://launchpadlibrarian.net/650575198/crun_1.8-1_amd64.deb
+sudo apt install ./crun_1.8-1_amd64.deb
+rm ./crun_1.8-1_amd64.deb
+```
+- (Toolbox) create group:
+```bash
+newgrp sudo
+```
+- [Source](https://github.com/containers/toolbox/issues/1361)
