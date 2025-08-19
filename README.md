@@ -48,7 +48,8 @@ echo "deb [trusted=yes] http://192.168.0.100/debian ./" | tee -a /etc/apt/source
 
 ```
 # sudo nano /etc/hosts
-127.0.1.1        toolbox
+127.0.0.1        toolbox
+127.0.0.1        toolbx
 ```
 
 ##### user is not in the sudoers file
