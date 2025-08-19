@@ -30,3 +30,12 @@ toolbox list
 ```bash
 toolbox enter aegis_dev-latest
 ```
+
+### Private Packages Repo (PPA)
+
+How to Set up private repo [here](utils/aegis_packages/README.md).
+
+**Adding private repo**
+```bash
+echo "deb [trusted=yes] http://192.168.0.100/debian ./" | tee -a /etc/apt/sources.list > /dev/null
+```
