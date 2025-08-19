@@ -1,4 +1,5 @@
 ARG ROS_DISTRO=humble
+ARG HOSTNAME=geonosis
 
 FROM docker.io/osrf/ros:${ROS_DISTRO}-desktop
 
@@ -19,6 +20,20 @@ RUN apt update  \
     && rosdep update --rosdistro $ROS_DISTRO \
     && rosdep install --from-paths src -y -i \
     # Size optimalization
+    && export SUDO_FORCE_REMOVE=yes \
+    && apt autoremove -y \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Local PPA for Basler proprietary packages
+RUN echo "deb [trusted=yes] http://${HOSTNAME}/debian ./" | tee -a /etc/apt/sources.list > /dev/null \
+    && apt update  \
+    && apt install -y \
+        libxcb-cursor-dev \
+    && apt install -y \
+        codemeter \
+        pylon \
+        pylon-supplementary-package-for-blaze \
     && export SUDO_FORCE_REMOVE=yes \
     && apt autoremove -y \
     && apt clean \
