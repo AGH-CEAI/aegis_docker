@@ -12,8 +12,8 @@ Copy all `*.deb` packages into the `./packages` directory.
 
 **Generate package list:**
 
-* After moving all packages to the `./packages` directory, you need to generate the **package list**.  
-* On a Debian-based system (e.g., Ubuntu), run the following command inside the `./packages` directory.  
+* After moving all packages to the `./packages` directory, you need to generate the **package list**.
+* On a Debian-based system (e.g., Ubuntu), run the following command inside the `./packages` directory.
     * There is **no need** to run this inside the container.
 ```bash
 dpkg-scanpackages . | gzip -c9  > Packages.gz
