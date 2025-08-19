@@ -7,8 +7,7 @@ WORKDIR /ws
 RUN apt-get update && \
     apt-get install -y \
         zsh \
-        ros-dev-tools \
-        ros-humble-ros-gz && \
+        ros-dev-tools && \
     # Setup workspace
     git clone -b humble-devel https://github.com/AGH-CEAI/aegis_ros.git src/aegis_ros && \
     vcs import src < src/aegis_ros/aegis/aegis.repos && \
