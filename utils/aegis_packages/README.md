@@ -6,12 +6,15 @@ More [here](https://linuxconfig.org/easy-way-to-create-a-debian-package-and-loca
 
 ## Preparing packages
 
-**Update packages list**:
+**Copy packages:**
 
-Copy all *.deb packages to `./packages` directory.
+Copy all `*.deb` packages into the `./packages` directory.
 
+**Generate package list:**
 
-**Update packages list**:
+* After moving all packages to the `./packages` directory, you need to generate the **package list**.  
+* On a Debian-based system (e.g., Ubuntu), run the following command inside the `./packages` directory.  
+    * There is **no need** to run this inside the container.
 ```bash
 dpkg-scanpackages . | gzip -c9  > Packages.gz
 ```
@@ -19,6 +22,8 @@ or
 ```bash
 sudo sh -c 'dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz'
 ```
+
+* Done! The PPA server is now ready to serve packages.
 
 ## Running Server
 
