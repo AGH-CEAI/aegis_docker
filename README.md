@@ -16,6 +16,8 @@ Currently there is no docker compose for running it - please stick to the toolbo
 ### Toolbox
 Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitigate the headaches about the users' privileges.
 
+To enable GPU support in toolbx containers on Ubuntu 22/24 host [some manual updates](./docs/ubuntu_gpu_toolbx.md) are necessary.
+
 **Building**:
 ```bash
 podman build . -t ceai/aegis_dev:latest
@@ -29,27 +31,36 @@ toolbox list
 toolbox enter aegis_dev-latest
 ```
 
+### Private Packages Repo (PPA)
+
+How to Set up private repo [here](utils/aegis_packages/README.md).
+
+**Adding private repo**
+```bash
+echo "deb [trusted=yes] http://192.168.0.100/debian ./" | tee -a /etc/apt/sources.list > /dev/null
+```
 
 #### Known issues:
 
 ##### `sudo`: unable to resolve host toolbox
 
-- (Host) Add toolbox to hosts:
+- (Host) Add toolbox to the `/etc/hosts`:
 
-        `sudo nano /etc/hosts`
+```
+# sudo nano /etc/hosts
+127.0.1.1        toolbox
+```
 
-- Add line:
+##### user is not in the sudoers file
 
-        `127.0.1.1       toolbox`
-
-##### @user is not in the sudoers file
-
-- (Host) Install crun (1.8-1): https://launchpad.net/ubuntu/lunar/amd64/crun/1.8-1 (crun_1.8-1_amd64.deb):
-
-        `sudo apt install crun_1.8-1_amd64.deb`
-
+- (Host) Install [crun (1.8-1)](https://launchpad.net/ubuntu/lunar/amd64/crun/1.8-1) :
+```bash
+wget http://launchpadlibrarian.net/650575198/crun_1.8-1_amd64.deb
+sudo apt install ./crun_1.8-1_amd64.deb
+rm ./crun_1.8-1_amd64.deb
+```
 - (Toolbox) create group:
-
-        `newgrp sudo`
-
+```bash
+newgrp sudo
+```
 - [Source](https://github.com/containers/toolbox/issues/1361)
