@@ -30,9 +30,9 @@ toolbox enter aegis_dev-latest
 ```
 
 
-**Known issues**:
+#### Known issues:
 
-##### sudo: unable to resolve host toolbox
+##### `sudo`: unable to resolve host toolbox
 
 - (Host) Add toolbox to hosts:
 
