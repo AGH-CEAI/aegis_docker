@@ -1,7 +1,9 @@
 ARG ROS_DISTRO=humble
-ARG HOSTNAME=geonosis
+ARG PPA_HOSTNAME=geonosis
 
 FROM docker.io/osrf/ros:${ROS_DISTRO}-desktop
+ARG ROS_DISTRO
+ARG PPA_HOSTNAME
 
 WORKDIR /ws
 
@@ -26,7 +28,7 @@ RUN apt update  \
     && rm -rf /var/lib/apt/lists/*
 
 # Local PPA for Basler proprietary packages
-RUN echo "deb [trusted=yes] http://${HOSTNAME}/debian ./" | tee -a /etc/apt/sources.list > /dev/null \
+RUN echo "deb [trusted=yes] http://${PPA_HOSTNAME}/debian ./" | tee -a /etc/apt/sources.list > /dev/null \
     && apt update  \
     && apt install -y \
         libxcb-cursor-dev \
