@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - [PR-11](https://github.com/AGH-CEAI/aegis_docker/pull/11) - Added Container for PPA server.
 - [PR-9](https://github.com/AGH-CEAI/aegis_docker/pull/9) - Added documentation for using toolbx containers in Ubuntu 22.04/24.04.
 - [PR-1](https://github.com/AGH-CEAI/aegis_docker/pull/1) - Initial version of the Aegis development container.
@@ -19,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- [PR-12](https://github.com/AGH-CEAI/aegis_docker/pull/12) - Fixed missing dependencies (Issue #7) for `depthai-ros`, `ros2-control`, `clang` and `pylon`.
 - [PR-2](https://github.com/AGH-CEAI/aegis_docker/pull/1) - Fixed typo with the default branch name
 
 ### Security
