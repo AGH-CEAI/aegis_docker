@@ -1,2 +1,6 @@
 # Debian packages
 *.deb
+
+# Containers registry blobs
+data
+link
