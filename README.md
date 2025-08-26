@@ -31,16 +31,23 @@ toolbox list
 toolbox enter aegis_dev-latest
 ```
 
+---
+
 ### Private Packages Repo (PPA)
 
-How to Set up private repo [here](utils/aegis_packages/README.md).
+How to Set up private repo [here](./utils/aegis_packages/README.md).
 
 **Adding private repo**
 ```bash
 echo "deb [trusted=yes] http://192.168.0.100/debian ./" | tee -a /etc/apt/sources.list > /dev/null
 ```
+### Containers registry
 
-#### Known issues:
+[Instructions how to use self-hosted container registry.](./utils/containers_registry/README.md)
+
+---
+
+### Known issues:
 
 ##### `sudo`: unable to resolve host `toolbox` / `toolbx`
 

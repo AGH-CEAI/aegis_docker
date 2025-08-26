@@ -35,3 +35,6 @@ docker compose up -d
 ### Adding new packages
 
 Follow `Preparing packages` step and the list of packages will automatically update.
+
+---
+[Back to main README](../../README.md)
