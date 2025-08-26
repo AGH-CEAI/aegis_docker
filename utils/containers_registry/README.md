@@ -5,7 +5,7 @@ This service allows to self-host container registry for Podman/Docker.
 Based on [this](https://infotechys.com/host-your-own-podman-registry/) tutorial.
 
 
-## Preapre the host
+## Prepare the host
 ```bash
 export REGISTRY_PATH=/var/lib/registry
 sudo mkdir -p $REGISTRY_PATH
@@ -19,12 +19,12 @@ docker compose up -d
 ```
 
 ## Setup the clients
-The easiest way is to provide the registry adress manually:
+The easiest way is to provide the registry address manually:
 ```bash
 sudo vim /etc/containers/registries.conf
 ```
 
-Assuming that `HOSTNAME` is your host IP adress:
+Assuming that `HOSTNAME` is your host IP address:
 ```
 [[registry]]
 location = "HOSTNAME:5000"
