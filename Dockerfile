@@ -1,9 +1,15 @@
 ARG ROS_DISTRO=humble
 ARG PPA_HOSTNAME=geonosis
+ARG AEGIS_ROS_TAG=${ROS_DISTRO}-devel
 
 FROM docker.io/osrf/ros:${ROS_DISTRO}-desktop
 ARG ROS_DISTRO
 ARG PPA_HOSTNAME
+ARG AEGIS_ROS_TAG
+
+LABEL org.opencontainers.image.authors="ceai@agh.edu.pl"
+LABEL aegis.ros.distro=${ROS_DISTRO}
+LABEL aegis.ros.tag=${AEGIS_ROS_TAG}
 
 WORKDIR /ws
 
@@ -16,7 +22,7 @@ RUN apt update  \
         ros-${ROS_DISTRO}-ros2-control \
         ros-${ROS_DISTRO}-ros2-controllers \
     # Setup workspace
-    && git clone -b ${ROS_DISTRO}-devel https://github.com/AGH-CEAI/aegis_ros.git src/aegis_ros \
+    && git clone -b ${AEGIS_ROS_TAG} https://github.com/AGH-CEAI/aegis_ros.git src/aegis_ros \
     && vcs import src < src/aegis_ros/aegis/aegis.repos \
     # Install dependencies
     && rosdep update --rosdistro $ROS_DISTRO \
