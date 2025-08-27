@@ -55,6 +55,8 @@ export AEGIS_CONTAINER_VERSION=<TAG>
 # --add-host $(hostname):$(hostname -I | awk '{print $1}')
 podman build . -t ceai/aegis_dev:${AEGIS_CONTAINER_VERSION} --build-arg AEGIS_ROS_TAG=${AEGIS_ROS_VERSION}
 podman tag ceai/aegis_dev:${AEGIS_CONTAINER_VERSION} ${REGISTRY_HOSTNAME}/ceai/aegis:${AEGIS_CONTAINER_VERSION}
+podman image inspect --format='{{json .Config.Labels}}' ${REGISTRY_HOSTNAME}/ceai/aegis:${AEGIS_CONTAINER_VERSION}
+
 podman push ${REGISTRY_HOSTNAME}/ceai/aegis:${AEGIS_CONTAINER_VERSION}
 ```
 
@@ -64,6 +66,7 @@ export REGISTRY_HOSTNAME=geonosis:5000
 export AEGIS_CONTAINER_VERSION=<TAG>
 
 podman pull ${REGISTRY_HOSTNAME}/ceai/aegis:${AEGIS_CONTAINER_VERSION}
+podman image inspect --format='{{json .Config.Labels}}' ${REGISTRY_HOSTNAME}/ceai/aegis:${AEGIS_CONTAINER_VERSION}
 
 toolbox create --image ${REGISTRY_HOSTNAME}/ceai/aegis:${AEGIS_CONTAINER_VERSION}
 toolbox enter aegis-${AEGIS_CONTAINER_VERSION}
