@@ -45,6 +45,30 @@ echo "deb [trusted=yes] http://192.168.0.100/debian ./" | tee -a /etc/apt/source
 
 [Instructions how to use self-hosted container registry.](./utils/containers_registry/README.md)
 
+#### Building & pushing a particular release tag
+```bash
+export REGISTRY_HOSTNAME=geonosis:5000
+export AEGIS_ROS_VERSION=<TAG>
+export AEGIS_CONTAINER_VERSION=<TAG>
+
+# if the building is happening on the same machine as PPA server, add argument:
+# --add-host $(hostname):$(hostname -I | awk '{print $1}')
+podman build . -t ceai/aegis_dev:${AEGIS_CONTAINER_VERSION} --build-arg AEGIS_ROS_TAG=${AEGIS_ROS_VERSION}
+podman tag ceai/aegis_dev:${AEGIS_CONTAINER_VERSION} ${REGISTRY_HOSTNAME}/ceai/aegis:${AEGIS_CONTAINER_VERSION}
+podman push ${REGISTRY_HOSTNAME}/ceai/aegis:${AEGIS_CONTAINER_VERSION}
+```
+
+#### Pulling & entering a particular release tag
+```bash
+export REGISTRY_HOSTNAME=geonosis:5000
+export AEGIS_CONTAINER_VERSION=<TAG>
+
+podman pull ${REGISTRY_HOSTNAME}/ceai/aegis:${AEGIS_CONTAINER_VERSION}
+
+toolbox create --image ${REGISTRY_HOSTNAME}/ceai/aegis:${AEGIS_CONTAINER_VERSION}
+toolbox enter aegis-${AEGIS_CONTAINER_VERSION}
+```
+
 ---
 
 ### Known issues:
