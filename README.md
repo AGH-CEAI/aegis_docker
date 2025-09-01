@@ -1,5 +1,9 @@
 # aegis_docker
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17018797.svg)](https://doi.org/10.5281/zenodo.17018797)
+
 This package contains all files for building & run container images for the Aegis robot station.
 
 The requirements for the packages are directly taken from the [aegis_ros](https://github.com/AGH-CEAI/aegis_ros).
