@@ -11,7 +11,7 @@ authors:
     given-names: Jakub
 title: "Aegis Robotic Station Container Files"
 version: v202509011041
-# identifiers:
-#   - type: doi
-#     value: 10.5281/zenodo.15047935
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.17018797
 date-released: 2025-08-27
