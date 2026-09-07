@@ -16,11 +16,12 @@ WORKDIR /ws
 RUN apt update  \
     && apt install -y \
         clang \
-        zsh \
-        ros-dev-tools \
+        python3-pip \
         ros-${ROS_DISTRO}-depthai-ros \
         ros-${ROS_DISTRO}-ros2-control \
         ros-${ROS_DISTRO}-ros2-controllers \
+        ros-dev-tools \
+        zsh \
     # Setup workspace
     && git clone -b ${AEGIS_ROS_TAG} https://github.com/AGH-CEAI/aegis_ros.git src/aegis_ros \
     && vcs import src < src/aegis_ros/aegis/aegis.repos \
