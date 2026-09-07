@@ -8,13 +8,16 @@ This package contains all files for building & run container images for the Aegi
 
 The requirements for the packages are directly taken from the [aegis_ros](https://github.com/AGH-CEAI/aegis_ros).
 
-## Development container image
+## Main container image
 
-### Docker
-You can build the image using the following command:
+To build a base image, both for `production` and `development`, run the following script and follow the instructions:
 ```bash
-docker build . -t ceai/aegis_dev:latest
+./build_image.sh
 ```
+
+## Production container
+
+## Development toolbx container
 Currently there is no docker compose for running it - please stick to the toolbox approach.
 
 ### Toolbox
@@ -22,7 +25,25 @@ Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitiga
 
 To enable GPU support in toolbx containers on Ubuntu 22/24 host [some manual updates](./docs/ubuntu_gpu_toolbx.md) are necessary.
 
-**Building**:
+**(Automatic) Setup**
+Add the following script to your PATH. Run it and follow the instructions:
+```bash
+mkdir -p ~/.local/bin
+ln -s ~/ceai_ws/src/aegis_docker/enter_toolbx.sh ~/.local/bin/aegis-toolbx
+ln -s ~/ceai_ws/src/aegis_docker/enter_toolbx.sh ~/.local/bin/cleanup-aegis-toolbx
+
+# Enter/recreate/remove toolbx. Best called in the working aegis_ros directory to detect the branch.
+aegis-toolbx
+# Cleanup all aegis toolbxes
+cleanup-aegis-toolbx
+```
+These scripts handles all creation and cleanup of the development toolbxes.
+
+> [NOTE]
+> Double check your $PATH env variable, it should contain the `~/.local/bin` directory.
+
+
+**(Manual) Building**:
 ```bash
 podman build . -t ceai/aegis_dev:latest
 toolbox create --image localhost/ceai/aegis_dev:latest
@@ -30,7 +51,7 @@ toolbox create --image localhost/ceai/aegis_dev:latest
 toolbox list
 ```
 
-**Entering into a new terminal**:
+**(Manual) Entering into a new terminal**:
 ```bash
 toolbox enter aegis_dev-latest
 ```
