@@ -16,6 +16,11 @@ To build a base image, both for `production` and `development`, run the followin
 ```
 
 ## Production container
+Build the image. Follow the instructions in the `run_project.sh` script:
+```bash
+mkdir -p ~/.local/bin
+ln -s ~/ceai_ws/src/aegis_docker/run/run_project.sh ~/.local/bin/aegis-run
+```
 
 ## Development toolbx container
 Currently there is no docker compose for running it - please stick to the toolbox approach.
@@ -26,11 +31,11 @@ Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitiga
 To enable GPU support in toolbx containers on Ubuntu 22/24 host [some manual updates](./docs/ubuntu_gpu_toolbx.md) are necessary.
 
 **(Automatic) Setup**
-Add the following script to your PATH. Run it and follow the instructions:
+Build the image. Add the following script to your PATH. Run it and follow the instructions:
 ```bash
 mkdir -p ~/.local/bin
-ln -s ~/ceai_ws/src/aegis_docker/enter_toolbx.sh ~/.local/bin/aegis-toolbx
-ln -s ~/ceai_ws/src/aegis_docker/enter_toolbx.sh ~/.local/bin/cleanup-aegis-toolbx
+ln -s ~/ceai_ws/src/aegis_docker/dev/enter_toolbx.sh ~/.local/bin/aegis-toolbx
+ln -s ~/ceai_ws/src/aegis_docker/dev/cleanup_toolbx.sh ~/.local/bin/cleanup-aegis-toolbx
 
 # Enter/recreate/remove toolbx. Best called in the working aegis_ros directory to detect the branch.
 aegis-toolbx
