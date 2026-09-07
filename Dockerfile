@@ -25,6 +25,7 @@ RUN apt update  \
     && git clone -b ${AEGIS_ROS_TAG} https://github.com/AGH-CEAI/aegis_ros.git src/aegis_ros \
     && vcs import src < src/aegis_ros/aegis/aegis.repos \
     # Install dependencies
+    && ./src/aegis_ros/aegis/scripts/register_local_rosdep_sources.sh src \
     && rosdep update --rosdistro $ROS_DISTRO \
     && rosdep install --from-paths src -y -i \
     # Size optimalization
