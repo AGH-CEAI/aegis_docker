@@ -1,4 +1,6 @@
 #!/bin/bash
+# Script generated with Claude Opus 5
+
 set -euo pipefail
 
 NAME_PREFIX="aegis_ros_dev-"
@@ -28,11 +30,10 @@ for cmd in podman toolbox; do
 done
 
 confirm() {
-    # $1 = question. Returns 0 on yes.
     local reply
     ((ASSUME_YES)) && return 0
-    read -r -p ">>> $1 (y/N): " reply
-    [[ "${reply}" =~ ^[yY]([eE][sS])?$ ]]
+    read -r -p ">>> $1 (Y/n): " reply
+    [[ ! "${reply}" =~ ^[nN]([oO])?$ ]]
 }
 
 # --- Containers ------------------------------------------------------------

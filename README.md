@@ -8,24 +8,30 @@ This package contains all files for building & run container images for the Aegi
 
 The requirements for the packages are directly taken from the [aegis_ros](https://github.com/AGH-CEAI/aegis_ros).
 
-## Main container image
-
-To build a base image, both for `production` and `development`, run the following script and follow the instructions:
+## Symbolic linking of the scripts
+There are couple of helper scripts, which helps to handle the whole `aegis_ros` project. Start by installing them.
 ```bash
-./build_image.sh
+./install_links.sh -h # See the help and parametrize installation if needed
+./install_links.sh
+```
+
+## Main container image
+To build a base container image, both for `production` and `development`, run the following script and follow the instructions:
+```bash
+# Globally
+aegis_build_image
 ```
 
 ## Production container
 Build the image. Follow the instructions in the `run_project.sh` script:
 ```bash
-mkdir -p ~/.local/bin
-ln -s ~/ceai_ws/src/aegis_docker/run/run_project.sh ~/.local/bin/aegis-run
+aegis_run -h
+aegis_run
+# Cleanup previous mess
+aegis_clean
 ```
 
 ## Development toolbx container
-Currently there is no docker compose for running it - please stick to the toolbox approach.
-
-### Toolbox
 Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitigate the headaches about the users' privileges.
 
 To enable GPU support in toolbx containers on Ubuntu 22/24 host [some manual updates](./docs/ubuntu_gpu_toolbx.md) are necessary.
@@ -33,14 +39,10 @@ To enable GPU support in toolbx containers on Ubuntu 22/24 host [some manual upd
 **(Automatic) Setup**
 Build the image. Add the following script to your PATH. Run it and follow the instructions:
 ```bash
-mkdir -p ~/.local/bin
-ln -s ~/ceai_ws/src/aegis_docker/dev/enter_toolbx.sh ~/.local/bin/aegis-toolbx
-ln -s ~/ceai_ws/src/aegis_docker/dev/cleanup_toolbx.sh ~/.local/bin/cleanup-aegis-toolbx
-
 # Enter/recreate/remove toolbx. Best called in the working aegis_ros directory to detect the branch.
-aegis-toolbx
+aegis_toolbx
 # Cleanup all aegis toolbxes
-cleanup-aegis-toolbx
+aegis_clean
 ```
 These scripts handles all creation and cleanup of the development toolbxes.
 

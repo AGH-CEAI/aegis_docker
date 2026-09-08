@@ -1,4 +1,6 @@
 #!/bin/bash
+# Script generated with Claude Opus 5
+
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
@@ -8,6 +10,7 @@ DEFAULT_IMAGE="ceai/aegis_ros"
 DEFAULT_VERSION="latest"
 FALLBACK_BRANCH="humble-devel"
 AEGIS_REPO_URL="https://github.com/AGH-CEAI/aegis_ros.git"
+AEGIS_REPO_NAME="aegis_ros"
 NAME_PREFIX="aegis_ros_dev-"
 
 for cmd in podman toolbox git; do
@@ -24,10 +27,28 @@ done
 
 # --- Helpers ---------------------------------------------------------------
 
+in_aegis_repo() {
+    # True when $PWD is inside an aegis_ros checkout (repo root or any
+    # subdirectory). Being in some other git repo does not count.
+    local toplevel url
+    toplevel="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+    [[ -n "${toplevel}" ]] || return 1
+
+    # Matches a checkout directory named aegis_ros...
+    [[ "$(basename "${toplevel}")" == "${AEGIS_REPO_NAME}" ]] && return 0
+
+    # ...or one cloned under a different name but pointing at the same remote.
+    url="$(git -C "${toplevel}" config --get remote.origin.url 2>/dev/null || true)"
+    [[ "${url}" == *"${AEGIS_REPO_NAME}"* ]]
+}
+
 detect_branch() {
-    # Branch of the directory the script was called from, not where it lives.
-    local branch
-    branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+    # Branch of the directory the script was called from, not where it lives,
+    # and only when that directory belongs to aegis_ros.
+    local branch=""
+    if in_aegis_repo; then
+        branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+    fi
     if [[ -z "${branch}" || "${branch}" == "HEAD" ]]; then
         branch="${FALLBACK_BRANCH}"
     fi
@@ -37,6 +58,7 @@ detect_branch() {
 resolve_rev() {
     # Resolve the branch to a commit so the dependency layer is rebuilt only
     # when the branch has actually moved. Falls back to a timestamp.
+    # Only the bare revision goes to stdout; it is captured by the caller.
     local branch="$1" rev
     rev="$(git ls-remote "${AEGIS_REPO_URL}" "${branch}" 2>/dev/null | cut -f1 || true)"
     if [[ -z "${rev}" ]]; then
@@ -44,7 +66,7 @@ resolve_rev() {
              "disabling layer cache." >&2
         rev="$(date +%s)"
     fi
-    echo ">>> ${rev}"
+    echo "${rev}"
 }
 
 build_and_enter() {
