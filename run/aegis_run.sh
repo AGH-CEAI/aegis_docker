@@ -96,6 +96,23 @@ command -v podman >/dev/null 2>&1 || {
 
 PROD_REF="${PROD_IMAGE}:${IMAGE_VERSION}"
 
+# --- Colours ---------------------------------------------------------------
+
+# Only colourise when stdout is a terminal, so redirected output and logs
+# stay free of escape sequences. NO_COLOR is honoured by convention.
+if [[ -t 1 && -z "${NO_COLOR:-}" ]]; then
+    C_YELLOW=$'\033[1;33m'
+    C_RED=$'\033[1;31m'
+    C_RESET=$'\033[0m'
+else
+    C_YELLOW=""
+    C_RED=""
+    C_RESET=""
+fi
+
+warn() { echo "${C_YELLOW}>>> $*${C_RESET}"; }
+err()  { echo "${C_RED}>>> $*${C_RESET}" >&2; }
+
 # --- Helpers ---------------------------------------------------------------
 
 in_aegis_repo() {
@@ -118,6 +135,51 @@ detect_branch() {
         branch="${FALLBACK_BRANCH}"
     fi
     echo "${branch}"
+}
+
+detect_conflicts() {
+    # Anything that looks like another aegis_ros session already running.
+    # Two sources, with different blind spots (see the note printed below).
+    local line
+
+    # Containers belonging to the current user.
+    while IFS= read -r line; do
+        [[ -n "${line}" ]] || continue
+        printf 'container  %s\n' "${line}"
+    done < <(
+        podman ps --format '{{.Names}} ({{.Image}})' 2>/dev/null \
+            | grep -E 'aegis' \
+            | grep -v -E "^${CONTAINER_NAME} " || true
+    )
+
+    # Processes anywhere on the host, including other users' and those
+    # inside toolbx or podman containers (they share the host PID namespace
+    # as far as /proc is concerned).
+    #
+    # The awk pass drops container-runtime plumbing (conmon, runc, the podman
+    # exec helper), which matches the pattern only because the container name
+    # appears in its arguments, then truncates and de-duplicates what is left.
+    ps -eo pid=,user:16=,args= 2>/dev/null | awk '
+        $0 !~ /bringup\.launch\.py|aegis_bringup|ceai\/aegis_(ros|prod)|aegis_ros_(dev-|prod)/ { next }
+        {
+            split($3, path, "/")
+            base = path[length(path) == 0 ? 1 : length(path)]
+
+            # Runtime helpers, not sessions.
+            if (base ~ /^(conmon|runc|crun|catatonit)$/) next
+            if ($0 ~ /--exit-command/) next
+            if (base == "podman" && $0 ~ / exec /) next
+
+            pid = $1; user = $2
+            $1 = ""; $2 = ""; sub(/^[ \t]+/, "")
+            cmd = $0
+            if (length(cmd) > 60) cmd = substr(cmd, 1, 57) "..."
+
+            key = user " " cmd
+            if (key in seen) next
+            seen[key] = 1
+            printf "process    %-8s %-12s %s\n", pid, user, cmd
+        }'
 }
 
 nvidia_available() {
@@ -218,7 +280,7 @@ show_provenance() {
     if [[ -n "${tag}" && -n "${rev}" ]]; then
         current="$(remote_rev "${tag}")"
         if [[ -n "${current}" && "${current}" != "${rev}" ]]; then
-            echo ">>> NOTE: '${tag}' has moved to ${current:0:8} since this image was built."
+            warn "NOTE: '${tag}' has moved to ${current:0:8} since this image was built."
         fi
     fi
     echo
@@ -262,6 +324,31 @@ if ((DO_PUSH)); then
 fi
 
 ((DO_RUN)) || exit 0
+
+# --- Conflicting sessions --------------------------------------------------
+
+if ((DRY_RUN == 0)); then
+    mapfile -t CONFLICTS < <(detect_conflicts)
+
+    if [[ ${#CONFLICTS[@]} -gt 0 ]]; then
+        echo
+        warn "WARNING: aegis_ros already seems to be running on this host:"
+        printf "${C_YELLOW}  %s${C_RESET}\n" "${CONFLICTS[@]}"
+        warn ""
+        warn "Two sessions on ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0} will see each"
+        warn "other's nodes and fight over the hardware. Set a different"
+        warn "ROS_DOMAIN_ID to work alongside them."
+        echo
+
+        if ((ASSUME_YES == 0)); then
+            read -r -p "${C_YELLOW}>>> Continue anyway? (y/N): ${C_RESET}" PROCEED
+            case "${PROCEED}" in
+                [yY] | [yY][eE][sS]) ;;
+                *) echo ">>> Aborted."; exit 0 ;;
+            esac
+        fi
+    fi
+fi
 
 # --- Confirm ---------------------------------------------------------------
 
