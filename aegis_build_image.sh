@@ -1,15 +1,34 @@
 #!/bin/bash
+# Script generated with Claude Opus 5
+
 set -euo pipefail
+
+# Resolve through symlinks so the build context is the repository, not $PWD.
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 
 IMAGE_NAME="ceai/aegis_ros"
 ROS_DISTRO="humble"
 BASE_IMAGE="docker.io/osrf/ros:${ROS_DISTRO}-desktop"
 LOCAL_PPA_HOSTNAME=geonosis
 
+# podman prefers Containerfile over Dockerfile; accept whichever is present.
+CONTAINERFILE=""
+for candidate in "${SCRIPT_DIR}/Containerfile" "${SCRIPT_DIR}/Dockerfile"; do
+    if [[ -f "${candidate}" ]]; then
+        CONTAINERFILE="${candidate}"
+        break
+    fi
+done
+
+if [[ -z "${CONTAINERFILE}" ]]; then
+    echo ">>> Error: no Containerfile or Dockerfile in ${SCRIPT_DIR}." >&2
+    exit 1
+fi
+
 # --- Build arguments -------------------------------------------------------
 
 echo ">>> BUILDING THE ${IMAGE_NAME} container image"
-
+echo ">>> Using ${CONTAINERFILE}"
 
 read -r -p ">>> Pull base image ${BASE_IMAGE} first? (Y/n): " DO_PULL
 case "${DO_PULL}" in
@@ -33,7 +52,8 @@ LOCAL_TAG="${IMAGE_NAME}:${IMAGE_VERSION}"
 # --- Build -----------------------------------------------------------------
 
 echo ">>> Building ${LOCAL_TAG} (AEGIS_ROS_TAG=${AEGIS_ROS_TAG})..."
-podman build . \
+podman build "${SCRIPT_DIR}" \
+    --file "${CONTAINERFILE}" \
     --build-arg "AEGIS_ROS_TAG=${AEGIS_ROS_TAG}" \
     --build-arg "ROS_DISTRO=${ROS_DISTRO}" \
     --build-arg "PPA_HOSTNAME=${LOCAL_PPA_HOSTNAME}" \
@@ -51,7 +71,6 @@ case "${DO_PUSH}" in
         exit 0
         ;;
 esac
-
 
 read -r -p ">>> Registry host [geonosis]: " REGISTRY_HOST
 REGISTRY_HOST="${REGISTRY_HOST:-geonosis}"
