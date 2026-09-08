@@ -8,21 +8,49 @@ This package contains all files for building & run container images for the Aegi
 
 The requirements for the packages are directly taken from the [aegis_ros](https://github.com/AGH-CEAI/aegis_ros).
 
-## Development container image
-
-### Docker
-You can build the image using the following command:
+## Symbolic linking of the scripts
+There are couple of helper scripts, which helps to handle the whole `aegis_ros` project. Start by installing them.
 ```bash
-docker build . -t ceai/aegis_dev:latest
+./install_links.sh -h # See the help and parametrize installation if needed
+./install_links.sh
 ```
-Currently there is no docker compose for running it - please stick to the toolbox approach.
 
-### Toolbox
+## Main container image
+To build a base container image, both for `production` and `development`, run the following script and follow the instructions:
+```bash
+# Globally
+aegis_build_image
+```
+
+## Production container
+Build the image. Follow the instructions in the `run_project.sh` script:
+```bash
+aegis_run -h
+aegis_run
+# Cleanup previous mess
+aegis_clean
+```
+
+## Development toolbx container
 Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitigate the headaches about the users' privileges.
 
 To enable GPU support in toolbx containers on Ubuntu 22/24 host [some manual updates](./docs/ubuntu_gpu_toolbx.md) are necessary.
 
-**Building**:
+**(Automatic) Setup**
+Build the image. Add the following script to your PATH. Run it and follow the instructions:
+```bash
+# Enter/recreate/remove toolbx. Best called in the working aegis_ros directory to detect the branch.
+aegis_toolbx
+# Cleanup all aegis toolbxes
+aegis_clean
+```
+These scripts handles all creation and cleanup of the development toolbxes.
+
+> [NOTE]
+> Double check your $PATH env variable, it should contain the `~/.local/bin` directory.
+
+
+**(Manual) Building**:
 ```bash
 podman build . -t ceai/aegis_dev:latest
 toolbox create --image localhost/ceai/aegis_dev:latest
@@ -30,7 +58,7 @@ toolbox create --image localhost/ceai/aegis_dev:latest
 toolbox list
 ```
 
-**Entering into a new terminal**:
+**(Manual) Entering into a new terminal**:
 ```bash
 toolbox enter aegis_dev-latest
 ```

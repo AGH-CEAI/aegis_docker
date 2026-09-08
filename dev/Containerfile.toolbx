@@ -1,0 +1,56 @@
+# Toolbx development image for aegis_ros.
+#
+# Takes an already-built aegis_ros image and refreshes only the workspace
+# dependencies (vcs + rosdep) against a chosen aegis_ros branch, then makes the
+# result usable as a Toolbx image.
+#
+# Built by enter_toolbx.sh:
+#   podman build . -f Containerfile.toolbx \
+#       --build-arg BASE_REF=ceai/aegis_ros:latest \
+#       --build-arg AEGIS_ROS_TAG=humble-devel \
+#       --build-arg AEGIS_ROS_REV=<commit sha> \
+#       -t localhost/aegis_ros_dev:latest
+
+ARG BASE_REF=ceai/aegis_ros:latest
+FROM ${BASE_REF}
+
+ARG AEGIS_ROS_TAG=humble-devel
+# Cache buster: changes whenever the branch points at a new commit.
+ARG AEGIS_ROS_REV=unknown
+
+# ROS_DISTRO comes from the base image's ENV, so it is not redeclared as ARG.
+LABEL com.github.containers.toolbox="true"
+LABEL aegis.ros.tag=${AEGIS_ROS_TAG}
+LABEL aegis.ros.rev=${AEGIS_ROS_REV}
+
+# Packages Toolbx expects to find inside the image.
+RUN apt update \
+    && apt install -y --no-install-recommends \
+        bash-completion \
+        libcap2-bin \
+        passwd \
+        procps \
+        rsync \
+        sudo \
+        tzdata \
+        util-linux \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /ws
+
+RUN git -C src/aegis_ros fetch --tags --prune origin \
+    && git -C src/aegis_ros checkout "${AEGIS_ROS_TAG}" \
+    && (git -C src/aegis_ros reset --hard "origin/${AEGIS_ROS_TAG}" || true) \
+    # Refresh the workspace repos listed in aegis.repos
+    && vcs import src < src/aegis_ros/aegis/aegis.repos \
+    # Refresh the dependencies
+    && ./src/aegis_ros/aegis/scripts/register_local_rosdep_sources.sh src \
+    && apt update \
+    && rosdep update --rosdistro "${ROS_DISTRO}" \
+    && rosdep install --from-paths src -y -i \
+    && export SUDO_FORCE_REMOVE=yes \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
+
+CMD ["/bin/bash"]

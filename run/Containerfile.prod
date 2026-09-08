@@ -1,0 +1,77 @@
+# Production image for aegis_ros.
+#
+# Takes the ceai/aegis_ros image, makes sure the workspace sources and
+# dependencies are up to date, builds the whole ROS project and sets the
+# bringup launch file as the entry point.
+#
+# Built by run_project.sh:
+#   podman build . -f Containerfile.prod \
+#       --build-arg BASE_REF=ceai/aegis_ros:latest \
+#       --build-arg AEGIS_ROS_TAG=humble-devel \
+#       -t ceai/aegis_prod:latest
+
+ARG BASE_REF=ceai/aegis_ros:latest
+FROM ${BASE_REF}
+
+ARG AEGIS_ROS_TAG=humble-devel
+# Cache buster: changes whenever the branch points at a new commit.
+ARG AEGIS_ROS_REV=unknown
+ARG CMAKE_BUILD_TYPE=Release
+
+# ROS_DISTRO comes from the base image's ENV, so it is not redeclared as ARG.
+WORKDIR /ws
+
+# Refresh the sources: clone if the base image does not carry them yet,
+# otherwise fetch and move to the requested ref.
+RUN if [ -d src/aegis_ros/.git ]; then \
+        git -C src/aegis_ros fetch --tags --prune origin \
+        && git -C src/aegis_ros checkout "${AEGIS_ROS_TAG}" \
+        && (git -C src/aegis_ros reset --hard "origin/${AEGIS_ROS_TAG}" || true); \
+    else \
+        git clone -b "${AEGIS_ROS_TAG}" \
+            https://github.com/AGH-CEAI/aegis_ros.git src/aegis_ros; \
+    fi \
+    && vcs import src < src/aegis_ros/aegis/aegis.repos \
+    # Re-resolve dependencies even if the base image already did it
+    && ./src/aegis_ros/aegis/scripts/register_local_rosdep_sources.sh src \
+    && apt update \
+    && rosdep update --rosdistro "${ROS_DISTRO}" \
+    && rosdep install --from-paths src -y -i \
+    && export SUDO_FORCE_REMOVE=yes \
+    && apt autoremove -y \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Build the whole workspace.
+RUN . "/opt/ros/${ROS_DISTRO}/setup.sh" \
+    && colcon build \
+        --merge-install \
+        --cmake-args "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}" \
+    # Intermediate artifacts are not needed at runtime
+    && rm -rf build log
+
+# Some packages resolve resources through an absolute ~/ceai_ws path
+# (e.g. aegis_utils calibration configs), so make that path point at /ws.
+RUN ln -sfn /ws /root/ceai_ws
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Provenance. Declared last on purpose: BUILD_DATE changes on every build, and
+# an ARG invalidates the cache for everything after it. Keeping it below the
+# heavy RUN steps means only these labels are re-applied.
+ARG BUILD_DATE=unknown
+ARG BASE_REF
+
+LABEL org.opencontainers.image.authors="ceai@agh.edu.pl"
+LABEL org.opencontainers.image.created=${BUILD_DATE}
+LABEL org.opencontainers.image.revision=${AEGIS_ROS_REV}
+LABEL org.opencontainers.image.source="https://github.com/AGH-CEAI/aegis_ros"
+LABEL aegis.role="production"
+LABEL aegis.base.ref=${BASE_REF}
+LABEL aegis.ros.tag=${AEGIS_ROS_TAG}
+LABEL aegis.ros.rev=${AEGIS_ROS_REV}
+LABEL aegis.build.date=${BUILD_DATE}
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD []
