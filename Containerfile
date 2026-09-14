@@ -29,7 +29,7 @@ RUN apt update  \
     && ./src/aegis_ros/aegis/scripts/register_local_rosdep_sources.sh src \
     && rosdep update --rosdistro $ROS_DISTRO \
     && rosdep install --from-paths src -y -i \
-    # Size optimalization
+    # Size optimization
     && export SUDO_FORCE_REMOVE=yes \
     && apt autoremove -y \
     && apt clean \

@@ -32,8 +32,8 @@ done
 confirm() {
     local reply
     ((ASSUME_YES)) && return 0
-    read -r -p ">>> $1 (Y/n): " reply
-    [[ ! "${reply}" =~ ^[nN]([oO])?$ ]]
+    read -r -p ">>> $1 (y/N): " reply
+    [[ "${reply}" =~ ^[yY]([eE][sS])?$ ]]
 }
 
 # --- Containers ------------------------------------------------------------

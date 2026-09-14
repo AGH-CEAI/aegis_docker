@@ -20,7 +20,7 @@ DRY_RUN=0
 
 usage() {
     cat << EOF
-Usage: install.sh [options]
+Usage: $(basename "$0") [options]
 
 Creates symlinks in ${BIN_DIR} for the aegis container scripts.
 

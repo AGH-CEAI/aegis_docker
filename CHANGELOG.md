@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* [PR-18](https://github.com/AGH-CEAI/aegis_ros/pull/18) - Added scripts for running the project in `production` mode or in `development` toolbx container.
+* [PR-18](https://github.com/AGH-CEAI/aegis_docker/pull/18) - Added scripts for running the project in `production` mode or in `development` toolbx container.
 
 ### Changed
 ### Deprecated

@@ -27,7 +27,7 @@ LAUNCH_ARGS=()
 
 usage() {
     cat << 'EOF'
-Usage: run_project.sh [options] [launch arguments]
+Usage: aegis_run [options] [launch arguments]
 
 Options:
   -b, --build            Build the production image before running
@@ -35,7 +35,7 @@ Options:
   -v, --version VER      Image version (default: latest)
   -r, --ref REF          aegis_ros branch/tag/commit (default: detected, else humble-devel)
   -n, --name NAME        Container name (default: aegis_ros_prod)
-  -p, --push [HOST:PORT] Push the image to a registry (default: geonosis:5000)
+  -p, --push[=HOST:PORT] Push the image to a registry (default: geonosis:5000)
   -y, --yes              Skip the confirmation prompt
       --gpu MODE         nvidia | none | auto (default: auto)
       --no-run           Build and/or push only, do not start the container
@@ -54,10 +54,10 @@ Launch arguments are passed straight to:
   model_disable_cell_led_supports:={false,true} (default: false)
 
 Examples:
-  ./run_project.sh --build mock_hardware:=true
-  ./run_project.sh --no-gui disable_cameras:=true
-  ./run_project.sh shell            # drop into a sourced shell instead
-  ./run_project.sh -B --push --no-run
+  aegis_run --build mock_hardware:=true
+  aegis_run --no-gui disable_cameras:=true
+  aegis_run shell            # drop into a sourced shell instead
+  aegis_run -B --push --no-run
 EOF
 }
 
@@ -65,19 +65,13 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         -b | --build)   DO_BUILD=1 ;;
         -B | --rebuild) DO_BUILD=1; FORCE_BUILD=1 ;;
-        -v | --version) IMAGE_VERSION="$2"; shift ;;
-        -r | --ref)     AEGIS_ROS_TAG="$2"; shift ;;
-        -n | --name)    CONTAINER_NAME="$2"; shift ;;
+        -v | --version) IMAGE_VERSION="${2:?-v/--version requires a value}"; shift ;;
+        -r | --ref)     AEGIS_ROS_TAG="${2:?-r/--ref requires a value}"; shift ;;
+        -n | --name)    CONTAINER_NAME="${2:?-n/--name requires a value}"; shift ;;
         -y | --yes)     ASSUME_YES=1 ;;
-        -p | --push)
-            DO_PUSH=1
-            # Optional value: only consume $2 if it looks like a registry
-            if [[ "${2:-}" =~ ^[A-Za-z0-9._-]+(:[0-9]+)?(/.*)?$ && "${2:-}" != *:=* ]]; then
-                REGISTRY="$2"
-                shift
-            fi
-            ;;
-        --gpu)          GPU_MODE="$2"; shift ;;
+        -p | --push)    DO_PUSH=1 ;;
+        --push=*)       DO_PUSH=1; REGISTRY="${1#*=}" ;;
+        --gpu)          GPU_MODE="${2:?--gpu requires a mode: nvidia|none|auto}"; shift ;;
         --no-run)       DO_RUN=0 ;;
         --no-gui)       WITH_GUI=0 ;;
         --dry-run)      DRY_RUN=1 ;;
@@ -231,7 +225,7 @@ build_image() {
 
 prompt_build_settings() {
     # Shows what is about to be built and lets it be edited, mirroring the
-    # create-new flow in enter_toolbx.sh. Updates the globals it touches.
+    # create-new flow in dev/aegis_toolbx.sh. Updates the globals it touches.
     local reply
     while true; do
         echo

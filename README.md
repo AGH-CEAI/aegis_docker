@@ -23,7 +23,7 @@ aegis_build_image
 ```
 
 ## Production container
-Build the image. Follow the instructions in the `run_project.sh` script:
+Build the image. Follow the instructions printed by `aegis_run`:
 ```bash
 aegis_run -h
 aegis_run
@@ -37,7 +37,7 @@ Toolbox ([toolbx](https://containertoolbx.org/)) is a development tool to mitiga
 To enable GPU support in toolbx containers on Ubuntu 22/24 host [some manual updates](./docs/ubuntu_gpu_toolbx.md) are necessary.
 
 **(Automatic) Setup**
-Build the image. Add the following script to your PATH. Run it and follow the instructions:
+Build the image. Follow the instructions printed by `aegis_run`:
 ```bash
 # Enter/recreate/remove toolbx. Best called in the working aegis_ros directory to detect the branch.
 aegis_toolbx
@@ -46,14 +46,14 @@ aegis_clean
 ```
 These scripts handles all creation and cleanup of the development toolbxes.
 
-> [NOTE]
+> [!NOTE]
 > Double check your $PATH env variable, it should contain the `~/.local/bin` directory.
 
 
 **(Manual) Building**:
 ```bash
-podman build . -t ceai/aegis_dev:latest
-toolbox create --image localhost/ceai/aegis_dev:latest
+podman build . -f dev/Containerfile.toolbx -t localhost/aegis_ros_dev:latest
+toolbox create --image localhost/aegis_ros_dev:latest aegis_ros_dev-latest
 # Check available images
 toolbox list
 ```

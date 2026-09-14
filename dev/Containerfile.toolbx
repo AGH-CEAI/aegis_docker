@@ -4,7 +4,7 @@
 # dependencies (vcs + rosdep) against a chosen aegis_ros branch, then makes the
 # result usable as a Toolbx image.
 #
-# Built by enter_toolbx.sh:
+# Built by dev/aegis_toolbx.sh:
 #   podman build . -f Containerfile.toolbx \
 #       --build-arg BASE_REF=ceai/aegis_ros:latest \
 #       --build-arg AEGIS_ROS_TAG=humble-devel \
@@ -39,7 +39,8 @@ RUN apt update \
 
 WORKDIR /ws
 
-RUN git -C src/aegis_ros fetch --tags --prune origin \
+RUN echo ">>> aegis_ros @ ${AEGIS_ROS_REV}" \
+    && git -C src/aegis_ros fetch --tags --prune origin \
     && git -C src/aegis_ros checkout "${AEGIS_ROS_TAG}" \
     && (git -C src/aegis_ros reset --hard "origin/${AEGIS_ROS_TAG}" || true) \
     # Refresh the workspace repos listed in aegis.repos
